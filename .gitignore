@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/
+!uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Test files
+test_report_*.pdf
+sample_report_*.pdf
+*.tmp
+
+# Temporary files
+tmp/
+temp/
+
+# Keep upload directory structure
+uploads/photos/
+uploads/speaker/
+uploads/signatures/
+uploads/attendance/
+uploads/brochure/
+uploads/notice/
+uploads/feedback/
+uploads/impact/
+

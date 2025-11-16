@@ -19,9 +19,16 @@
         .header {
             background-color: #fff;
             padding: 20px;
-            text-align: center;
             border-bottom: 2px solid #2c3e50;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header > div:first-child {
+            text-align: center;
+            flex: 1;
         }
 
         .header h1 {
@@ -387,9 +394,15 @@
 <body>
     <!-- Header -->
     <div class="header">
+        <div>
         <h1>Christ(Deemed to be University)</h1>
         <p>School of Engineering and Technology</p>
         <p>Department of AI, ML & Data Science</p>
+        </div>
+        <div style="text-align: right; margin-top: 10px;">
+            <a href="{{ url_for('dashboard') }}" style="color: #2c3e50; text-decoration: none; margin-right: 15px; font-weight: 600;">📊 Dashboard</a>
+            <a href="{{ url_for('logout') }}" style="color: #2c3e50; text-decoration: none; font-weight: 600;">🚪 Logout</a>
+        </div>
     </div>
 
     <div class="container">
@@ -416,6 +429,21 @@
             <div class="sidebar-item" onclick="showSection('activity-photos')">
                 📸 Activity Photos
             </div>
+            <div class="sidebar-item" onclick="showSection('attendance-list')">
+                📄 Attendance List
+            </div>
+            <div class="sidebar-item" onclick="showSection('brochure')">
+                📑 Brochure
+            </div>
+            <div class="sidebar-item" onclick="showSection('notice-approval')">
+                📢 Notice for Approval
+            </div>
+            <div class="sidebar-item" onclick="showSection('feedback-analysis')">
+                🧾 Feedback Analysis
+            </div>
+            <div class="sidebar-item" onclick="showSection('impact-analysis')">
+                📊 Impact Analysis
+            </div>
             <div class="sidebar-item" onclick="showSection('submit')">
                 ✅ Generate Report
             </div>
@@ -423,7 +451,7 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <form id="reportForm" method="POST" enctype="multipart/form-data">
+            <form id="reportForm" method="POST" action="{{ url_for('report') }}" enctype="multipart/form-data">
 
                 <!-- 1. General Information Section -->
                 <div class="section active" id="general-info">
@@ -500,6 +528,9 @@
                         <button type="button" class="nav-btn" disabled>← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('speaker-details')">Next →</button>
                     </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('general-info')">💾 Save Draft</button>
+                    </div>
                 </div>
 
                 <!-- 2. Speaker/Guest Details Section -->
@@ -548,6 +579,9 @@
                         <button type="button" class="nav-btn" onclick="showSection('general-info')">← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('participants')">Next →</button>
                     </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('speaker-details')">💾 Save Draft</button>
+                    </div>
                 </div>
 
                 <!-- 3. Participants Profile Section -->
@@ -590,35 +624,101 @@
                         <button type="button" class="nav-btn" onclick="showSection('speaker-details')">← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('synopsis')">Next →</button>
                     </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('participants')">💾 Save Draft</button>
+                    </div>
                 </div>
 
                 <!-- 4. Synopsis Section -->
                 <div class="section" id="synopsis">
                     <h2>Synopsis of the Activity</h2>
+                    <div class="info-box" style="margin-bottom: 20px;">
+                        <strong>Formatting Options:</strong> For each field, you can choose to format as plain text, bullet points, or numbered list. 
+                        Enter each item on a new line for bullet/number formatting.
+                    </div>
 
                     <div class="form-group">
                         <label for="highlights" class="required">Highlights of the Activity</label>
-                        <textarea id="highlights" name="highlights" placeholder="Enter highlights of the activity" required></textarea>
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="highlights-format" value="plain" checked style="margin-right: 5px;">
+                                Plain Text
+                            </label>
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="highlights-format" value="bullet" style="margin-right: 5px;">
+                                Bullet Points
+                            </label>
+                            <label style="font-size: 13px; color: #555;">
+                                <input type="radio" name="highlights-format" value="numbered" style="margin-right: 5px;">
+                                Numbered List
+                            </label>
+                        </div>
+                        <textarea id="highlights" name="highlights" placeholder="Enter highlights (one per line for bullets/numbers)" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="keyTakeaways" class="required">Key Takeaways</label>
-                        <textarea id="keyTakeaways" name="keyTakeaways" placeholder="Enter key takeaways" required></textarea>
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="keyTakeaways-format" value="plain" checked style="margin-right: 5px;">
+                                Plain Text
+                            </label>
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="keyTakeaways-format" value="bullet" style="margin-right: 5px;">
+                                Bullet Points
+                            </label>
+                            <label style="font-size: 13px; color: #555;">
+                                <input type="radio" name="keyTakeaways-format" value="numbered" style="margin-right: 5px;">
+                                Numbered List
+                            </label>
+                        </div>
+                        <textarea id="keyTakeaways" name="keyTakeaways" placeholder="Enter key takeaways (one per line for bullets/numbers)" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="summary" class="required">Summary of the Activity</label>
-                        <textarea id="summary" name="summary" placeholder="Enter summary of the activity" required></textarea>
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="summary-format" value="plain" checked style="margin-right: 5px;">
+                                Plain Text
+                            </label>
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="summary-format" value="bullet" style="margin-right: 5px;">
+                                Bullet Points
+                            </label>
+                            <label style="font-size: 13px; color: #555;">
+                                <input type="radio" name="summary-format" value="numbered" style="margin-right: 5px;">
+                                Numbered List
+                            </label>
+                        </div>
+                        <textarea id="summary" name="summary" placeholder="Enter summary (one per line for bullets/numbers)" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="followUp" class="required">Follow-up Plan</label>
-                        <textarea id="followUp" name="followUp" placeholder="Enter follow-up plan" required></textarea>
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="followUp-format" value="plain" checked style="margin-right: 5px;">
+                                Plain Text
+                            </label>
+                            <label style="font-size: 13px; color: #555; margin-right: 15px;">
+                                <input type="radio" name="followUp-format" value="bullet" style="margin-right: 5px;">
+                                Bullet Points
+                            </label>
+                            <label style="font-size: 13px; color: #555;">
+                                <input type="radio" name="followUp-format" value="numbered" style="margin-right: 5px;">
+                                Numbered List
+                            </label>
+                        </div>
+                        <textarea id="followUp" name="followUp" placeholder="Enter follow-up plan (one per line for bullets/numbers)" required></textarea>
                     </div>
 
                     <div class="navigation-buttons">
                         <button type="button" class="nav-btn" onclick="showSection('participants')">← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('report-prepared')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('synopsis')">💾 Save Draft</button>
                     </div>
                 </div>
 
@@ -649,11 +749,32 @@
 
                             <div class="form-group">
                                 <label for="preparer-signature-0" class="required">Digital Signature (Image)</label>
+                                
+                                {% if saved_signatures and saved_signatures|length > 0 %}
+                                <div style="margin-bottom: 15px;">
+                                    <label style="font-size: 13px; color: #555; margin-bottom: 8px; display: block;">Or select a saved signature:</label>
+                                    <select id="preparer-signature-saved-0" name="preparer-signature-saved-0" onchange="handleSavedSignatureSelect(0, this.value)" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                                        <option value="none">-- Use new upload --</option>
+                                        {% for sig in saved_signatures %}
+                                        <option value="{{ sig.id }}" {% if sig.is_default %}selected{% endif %}>{{ sig.signature_name }}{% if sig.is_default %} (Default){% endif %}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="preparer-signature-saved-preview-0" style="margin-top: 10px; text-align: center;"></div>
+                                </div>
+                                {% endif %}
+                                
                                 <div class="file-upload" onclick="document.getElementById('preparer-signature-0').click()">
                                     <div class="file-upload-text">📁 Click to upload signature</div>
-                                    <div class="file-upload-subtext">JPG, PNG (max 2MB)</div>
-                                    <input type="file" id="preparer-signature-0" name="preparer-signature-0" accept="image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-upload-subtext">JPG, PNG (max 10MB - will be auto-compressed)</div>
+                                    <input type="file" id="preparer-signature-0" name="preparer-signature-0" accept="image/*" onchange="handleFileUpload(this); const savedSel = document.getElementById('preparer-signature-saved-0'); if(savedSel) savedSel.value='none';">
                                     <div class="file-preview" id="preparer-signature-0-preview"></div>
+                                </div>
+                                
+                                <div style="margin-top: 10px;">
+                                    <label style="font-size: 13px; display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" id="save-signature-0" name="save-signature-0" style="margin-right: 8px;">
+                                        <span>Save this signature for future use</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -662,6 +783,9 @@
                     <div class="navigation-buttons">
                         <button type="button" class="nav-btn" onclick="showSection('synopsis')">← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('speaker-profile')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('report-prepared')">💾 Save Draft</button>
                     </div>
                 </div>
 
@@ -688,6 +812,9 @@
                     <div class="navigation-buttons">
                         <button type="button" class="nav-btn" onclick="showSection('report-prepared')">← Previous</button>
                         <button type="button" class="nav-btn" onclick="showSection('activity-photos')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('speaker-profile')">💾 Save Draft</button>
                     </div>
                 </div>
 
@@ -728,13 +855,217 @@
 
                     <div class="navigation-buttons">
                         <button type="button" class="nav-btn" onclick="showSection('speaker-profile')">← Previous</button>
-                        <button type="button" class="nav-btn" onclick="showSection('submit')">Next →</button>
+                        <button type="button" class="nav-btn" onclick="showSection('attendance-list')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('activity-photos')">💾 Save Draft</button>
                     </div>
                 </div>
 
-                <!-- 8. Submit Section -->
+                <!-- 8. Attendance List Section -->
+                <div class="section" id="attendance-list">
+                    <h2>Attendance List 📄</h2>
+                    <div class="info-box">Upload attendance list documents (PDF or image). You can add multiple files.</div>
+
+                    <div id="attendanceListContainer">
+                        <div class="dynamic-section" data-attendance-index="0">
+                            <div class="dynamic-section-header">
+                                <span class="dynamic-section-title">Attendance List 1</span>
+                                <button type="button" class="btn btn-danger" onclick="removeAttendanceItem(0)" style="display:none;">Remove</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="attendance-0">Upload File (PDF or Image)</label>
+                                <div class="file-upload" onclick="document.getElementById('attendance-0').click()">
+                                    <div class="file-upload-text">📁 Click to upload</div>
+                                    <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                                    <input type="file" id="attendance-0" name="attendance-0" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-preview" id="attendance-0-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addAttendanceItem()">+ Add More</button>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn" onclick="showSection('activity-photos')">← Previous</button>
+                        <button type="button" class="nav-btn" onclick="showSection('brochure')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('attendance-list')">💾 Save Draft</button>
+                    </div>
+                </div>
+
+                <!-- 9. Brochure Section -->
+                <div class="section" id="brochure">
+                    <h2>Brochure 📑</h2>
+                    <div class="info-box">Upload brochure documents (PDF or image). You can add multiple files.</div>
+
+                    <div id="brochureContainer">
+                        <div class="dynamic-section" data-brochure-index="0">
+                            <div class="dynamic-section-header">
+                                <span class="dynamic-section-title">Brochure 1</span>
+                                <button type="button" class="btn btn-danger" onclick="removeBrochureItem(0)" style="display:none;">Remove</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="brochure-0">Upload File (PDF or Image)</label>
+                                <div class="file-upload" onclick="document.getElementById('brochure-0').click()">
+                                    <div class="file-upload-text">📁 Click to upload</div>
+                                    <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                                    <input type="file" id="brochure-0" name="brochure-0" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-preview" id="brochure-0-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addBrochureItem()">+ Add More</button>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn" onclick="showSection('attendance-list')">← Previous</button>
+                        <button type="button" class="nav-btn" onclick="showSection('notice-approval')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('brochure')">💾 Save Draft</button>
+                    </div>
+                </div>
+
+                <!-- 10. Notice for Approval Section -->
+                <div class="section" id="notice-approval">
+                    <h2>Notice for Approval 📢</h2>
+                    <div class="info-box">Upload notice for approval documents (PDF or image). You can add multiple files.</div>
+
+                    <div id="noticeContainer">
+                        <div class="dynamic-section" data-notice-index="0">
+                            <div class="dynamic-section-header">
+                                <span class="dynamic-section-title">Notice 1</span>
+                                <button type="button" class="btn btn-danger" onclick="removeNoticeItem(0)" style="display:none;">Remove</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="notice-0">Upload File (PDF or Image)</label>
+                                <div class="file-upload" onclick="document.getElementById('notice-0').click()">
+                                    <div class="file-upload-text">📁 Click to upload</div>
+                                    <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                                    <input type="file" id="notice-0" name="notice-0" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-preview" id="notice-0-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addNoticeItem()">+ Add More</button>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn" onclick="showSection('brochure')">← Previous</button>
+                        <button type="button" class="nav-btn" onclick="showSection('feedback-analysis')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('notice-approval')">💾 Save Draft</button>
+                    </div>
+                </div>
+
+                <!-- 11. Feedback Analysis Section -->
+                <div class="section" id="feedback-analysis">
+                    <h2>Feedback Analysis 🧾</h2>
+                    <div class="info-box">Upload feedback analysis documents (PDF or image). You can add multiple files.</div>
+
+                    <div id="feedbackContainer">
+                        <div class="dynamic-section" data-feedback-index="0">
+                            <div class="dynamic-section-header">
+                                <span class="dynamic-section-title">Feedback Analysis 1</span>
+                                <button type="button" class="btn btn-danger" onclick="removeFeedbackItem(0)" style="display:none;">Remove</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="feedback-0">Upload File (PDF or Image)</label>
+                                <div class="file-upload" onclick="document.getElementById('feedback-0').click()">
+                                    <div class="file-upload-text">📁 Click to upload</div>
+                                    <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                                    <input type="file" id="feedback-0" name="feedback-0" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-preview" id="feedback-0-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addFeedbackItem()">+ Add More</button>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn" onclick="showSection('notice-approval')">← Previous</button>
+                        <button type="button" class="nav-btn" onclick="showSection('impact-analysis')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('feedback-analysis')">💾 Save Draft</button>
+                    </div>
+                </div>
+
+                <!-- 12. Impact Analysis Section -->
+                <div class="section" id="impact-analysis">
+                    <h2>Impact Analysis 📊</h2>
+                    <div class="info-box">Upload impact analysis documents (PDF or image). You can add multiple files.</div>
+
+                    <div id="impactContainer">
+                        <div class="dynamic-section" data-impact-index="0">
+                            <div class="dynamic-section-header">
+                                <span class="dynamic-section-title">Impact Analysis 1</span>
+                                <button type="button" class="btn btn-danger" onclick="removeImpactItem(0)" style="display:none;">Remove</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="impact-0">Upload File (PDF or Image)</label>
+                                <div class="file-upload" onclick="document.getElementById('impact-0').click()">
+                                    <div class="file-upload-text">📁 Click to upload</div>
+                                    <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                                    <input type="file" id="impact-0" name="impact-0" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                                    <div class="file-preview" id="impact-0-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addImpactItem()">+ Add More</button>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="nav-btn" onclick="showSection('feedback-analysis')">← Previous</button>
+                        <button type="button" class="nav-btn" onclick="showSection('submit')">Next →</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft('impact-analysis')">💾 Save Draft</button>
+                    </div>
+                </div>
+                
+
+                <!-- 13. Submit Section -->
                 <div class="section" id="submit">
                     <h2>Generate Report</h2>
+                    {% if draft_id and is_owner %}
+                    <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #3498db;">
+                        <h3 style="margin-bottom: 10px; color: #2c3e50;">👥 Collaboration</h3>
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="font-size: 14px; margin-bottom: 8px;">Collaborators:</h4>
+                            {% if collaborators %}
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    {% for collab in collaborators %}
+                                    <li style="margin-bottom: 5px;">
+                                        {{ collab.email }}
+                                        <form method="POST" action="{{ url_for('remove_collaborator_route', draft_id=draft_id, user_id=collab.user_id) }}" style="display: inline; margin-left: 10px;">
+                                            <button type="submit" style="background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">Remove</button>
+                                        </form>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p style="color: #7f8c8d; font-size: 13px;">No collaborators yet.</p>
+                            {% endif %}
+                        </div>
+                        <form method="POST" action="{{ url_for('add_collaborator_route', draft_id=draft_id) }}" style="display: flex; gap: 10px;">
+                            <input type="email" name="email" placeholder="Enter collaborator email" required style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button type="submit" style="background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Add Collaborator</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <div style="margin-bottom: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="generatePreview()" style="background: #9b59b6; margin-right: 10px;">👁️ Live Preview</button>
+                        <button type="submit" class="btn btn-primary">✅ Generate Report</button>
+                    </div>
                     <div class="info-box">Review all information and click the button below to generate your PDF report.</div>
 
                     <div style="margin: 20px 0; padding: 15px; background-color: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
@@ -792,6 +1123,14 @@
         let speakerCount = 1;
         let participantCount = 1;
         let preparerCount = 1;
+        let attendanceCount = 1;
+        let brochureCount = 1;
+        let noticeCount = 1;
+        let feedbackCount = 1;
+        let impactCount = 1;
+        
+        // Saved signatures data for JavaScript
+        const savedSignatures = {% if saved_signatures %}{{ saved_signatures|tojson|safe }}{% else %}[]{% endif %};
 
         function updateSubcategories() {
             const activityType = document.getElementById('activityType').value;
@@ -979,11 +1318,18 @@
 
                 <div class="form-group">
                     <label for="preparer-signature-${newIndex}" class="required">Digital Signature (Image)</label>
+                    ${getSavedSignaturesHTML(newIndex)}
                     <div class="file-upload" onclick="document.getElementById('preparer-signature-${newIndex}').click()">
                         <div class="file-upload-text">📁 Click to upload signature</div>
-                        <div class="file-upload-subtext">JPG, PNG (max 2MB)</div>
-                        <input type="file" id="preparer-signature-${newIndex}" name="preparer-signature-${newIndex}" accept="image/*" onchange="handleFileUpload(this)">
+                        <div class="file-upload-subtext">JPG, PNG (max 10MB - will be auto-compressed)</div>
+                        <input type="file" id="preparer-signature-${newIndex}" name="preparer-signature-${newIndex}" accept="image/*" onchange="handleFileUpload(this); const savedSel = document.getElementById('preparer-signature-saved-${newIndex}'); if(savedSel) savedSel.value='none';">
                         <div class="file-preview" id="preparer-signature-${newIndex}-preview"></div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 13px; display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="save-signature-${newIndex}" name="save-signature-${newIndex}" style="margin-right: 8px;">
+                            <span>Save this signature for future use</span>
+                        </label>
                     </div>
                 </div>
             `;
@@ -997,6 +1343,18 @@
             if (preparer) {
                 preparer.remove();
             }
+        }
+
+        function getSavedSignaturesHTML(index) {
+            if (!savedSignatures || savedSignatures.length === 0) {
+                return '';
+            }
+            let html = '<div style="margin-bottom: 15px;"><label style="font-size: 13px; color: #555; margin-bottom: 8px; display: block;">Or select a saved signature:</label><select id="preparer-signature-saved-' + index + '" name="preparer-signature-saved-' + index + '" onchange="handleSavedSignatureSelect(' + index + ', this.value)" style="width: 100%; padding: 8px; margin-bottom: 10px;"><option value="none">-- Use new upload --</option>';
+            savedSignatures.forEach(function(sig) {
+                html += '<option value="' + sig.id + '"' + (sig.is_default ? ' selected' : '') + '>' + sig.signature_name + (sig.is_default ? ' (Default)' : '') + '</option>';
+            });
+            html += '</select><div id="preparer-signature-saved-preview-' + index + '" style="margin-top: 10px; text-align: center;"></div></div>';
+            return html;
         }
 
         function handleFileUpload(input) {
@@ -1019,10 +1377,273 @@
             document.getElementById('charCount').textContent = count;
         }
 
+        // New section functions
+        function addAttendanceItem() {
+            const container = document.getElementById('attendanceListContainer');
+            const newIndex = attendanceCount;
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-section';
+            newItem.setAttribute('data-attendance-index', newIndex);
+            newItem.innerHTML = `
+                <div class="dynamic-section-header">
+                    <span class="dynamic-section-title">Attendance List ${newIndex + 1}</span>
+                    <button type="button" class="btn btn-danger" onclick="removeAttendanceItem(${newIndex})">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="attendance-${newIndex}">Upload File (PDF or Image)</label>
+                    <div class="file-upload" onclick="document.getElementById('attendance-${newIndex}').click()">
+                        <div class="file-upload-text">📁 Click to upload</div>
+                        <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                        <input type="file" id="attendance-${newIndex}" name="attendance-${newIndex}" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                        <div class="file-preview" id="attendance-${newIndex}-preview"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+            attendanceCount++;
+        }
+
+        function removeAttendanceItem(index) {
+            const item = document.querySelector(`[data-attendance-index="${index}"]`);
+            if (item) item.remove();
+        }
+
+        function addBrochureItem() {
+            const container = document.getElementById('brochureContainer');
+            const newIndex = brochureCount;
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-section';
+            newItem.setAttribute('data-brochure-index', newIndex);
+            newItem.innerHTML = `
+                <div class="dynamic-section-header">
+                    <span class="dynamic-section-title">Brochure ${newIndex + 1}</span>
+                    <button type="button" class="btn btn-danger" onclick="removeBrochureItem(${newIndex})">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="brochure-${newIndex}">Upload File (PDF or Image)</label>
+                    <div class="file-upload" onclick="document.getElementById('brochure-${newIndex}').click()">
+                        <div class="file-upload-text">📁 Click to upload</div>
+                        <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                        <input type="file" id="brochure-${newIndex}" name="brochure-${newIndex}" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                        <div class="file-preview" id="brochure-${newIndex}-preview"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+            brochureCount++;
+        }
+
+        function removeBrochureItem(index) {
+            const item = document.querySelector(`[data-brochure-index="${index}"]`);
+            if (item) item.remove();
+        }
+
+        function addNoticeItem() {
+            const container = document.getElementById('noticeContainer');
+            const newIndex = noticeCount;
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-section';
+            newItem.setAttribute('data-notice-index', newIndex);
+            newItem.innerHTML = `
+                <div class="dynamic-section-header">
+                    <span class="dynamic-section-title">Notice ${newIndex + 1}</span>
+                    <button type="button" class="btn btn-danger" onclick="removeNoticeItem(${newIndex})">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="notice-${newIndex}">Upload File (PDF or Image)</label>
+                    <div class="file-upload" onclick="document.getElementById('notice-${newIndex}').click()">
+                        <div class="file-upload-text">📁 Click to upload</div>
+                        <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                        <input type="file" id="notice-${newIndex}" name="notice-${newIndex}" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                        <div class="file-preview" id="notice-${newIndex}-preview"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+            noticeCount++;
+        }
+
+        function removeNoticeItem(index) {
+            const item = document.querySelector(`[data-notice-index="${index}"]`);
+            if (item) item.remove();
+        }
+
+        function addFeedbackItem() {
+            const container = document.getElementById('feedbackContainer');
+            const newIndex = feedbackCount;
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-section';
+            newItem.setAttribute('data-feedback-index', newIndex);
+            newItem.innerHTML = `
+                <div class="dynamic-section-header">
+                    <span class="dynamic-section-title">Feedback Analysis ${newIndex + 1}</span>
+                    <button type="button" class="btn btn-danger" onclick="removeFeedbackItem(${newIndex})">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="feedback-${newIndex}">Upload File (PDF or Image)</label>
+                    <div class="file-upload" onclick="document.getElementById('feedback-${newIndex}').click()">
+                        <div class="file-upload-text">📁 Click to upload</div>
+                        <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                        <input type="file" id="feedback-${newIndex}" name="feedback-${newIndex}" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                        <div class="file-preview" id="feedback-${newIndex}-preview"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+            feedbackCount++;
+        }
+
+        function removeFeedbackItem(index) {
+            const item = document.querySelector(`[data-feedback-index="${index}"]`);
+            if (item) item.remove();
+        }
+
+        function addImpactItem() {
+            const container = document.getElementById('impactContainer');
+            const newIndex = impactCount;
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-section';
+            newItem.setAttribute('data-impact-index', newIndex);
+            newItem.innerHTML = `
+                <div class="dynamic-section-header">
+                    <span class="dynamic-section-title">Impact Analysis ${newIndex + 1}</span>
+                    <button type="button" class="btn btn-danger" onclick="removeImpactItem(${newIndex})">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="impact-${newIndex}">Upload File (PDF or Image)</label>
+                    <div class="file-upload" onclick="document.getElementById('impact-${newIndex}').click()">
+                        <div class="file-upload-text">📁 Click to upload</div>
+                        <div class="file-upload-subtext">PDF, JPG, PNG (max 10MB)</div>
+                        <input type="file" id="impact-${newIndex}" name="impact-${newIndex}" accept=".pdf,image/*" onchange="handleFileUpload(this)">
+                        <div class="file-preview" id="impact-${newIndex}-preview"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+            impactCount++;
+        }
+
+        function removeImpactItem(index) {
+            const item = document.querySelector(`[data-impact-index="${index}"]`);
+            if (item) item.remove();
+        }
+
+        function handleSavedSignatureSelect(index, signatureId) {
+            const previewDiv = document.getElementById(`preparer-signature-saved-preview-${index}`);
+            if (!previewDiv) return;
+            
+            if (signatureId === 'none' || !signatureId) {
+                previewDiv.innerHTML = '';
+                return;
+            }
+            // Show preview of selected signature
+            previewDiv.innerHTML = '<span class="success-message">✓ Using saved signature</span>';
+        }
+
+        function saveDraft(sectionId) {
+            const form = document.getElementById('reportForm');
+            const formData = new FormData(form);
+            formData.append('action', 'save_draft');
+            formData.append('section', sectionId);
+
+            fetch('/save_draft', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Draft saved successfully!');
+                } else {
+                    alert('Error saving draft: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving draft. Please try again.');
+            });
+        }
+
+        // Live Preview Function
+        function generatePreview() {
+            const form = document.getElementById('reportForm');
+            const formData = new FormData(form);
+            formData.append('action', 'preview');
+            
+            // Show loading
+            const previewModal = document.getElementById('previewModal');
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Generating preview...</p></div>';
+            previewModal.style.display = 'block';
+            
+            fetch('/preview-report', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    previewContent.innerHTML = `
+                        <iframe src="data:application/pdf;base64,${data.pdf}" style="width: 100%; height: 80vh; border: none;"></iframe>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button onclick="document.getElementById('previewModal').style.display='none'" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Close Preview</button>
+                        </div>
+                    `;
+                } else {
+                    previewContent.innerHTML = `
+                        <div style="padding: 20px; color: #e74c3c;">
+                            <h3>Error generating preview</h3>
+                            <p>${data.error || 'Unknown error occurred'}</p>
+                            <button onclick="document.getElementById('previewModal').style.display='none'" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Close</button>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                previewContent.innerHTML = `
+                    <div style="padding: 20px; color: #e74c3c;">
+                        <h3>Error generating preview</h3>
+                        <p>${error.message}</p>
+                        <button onclick="document.getElementById('previewModal').style.display='none'" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Close</button>
+                    </div>
+                `;
+            });
+        }
+        
+        // Load draft data if available
+        {% if draft_data %}
+        document.addEventListener('DOMContentLoaded', function() {
+            const draftData = {{ draft_data|tojson|safe }};
+            
+            // Load synopsis format options
+            if (draftData['highlights-format']) {
+                document.querySelector(`input[name="highlights-format"][value="${draftData['highlights-format']}"]`).checked = true;
+            }
+            if (draftData['keyTakeaways-format']) {
+                document.querySelector(`input[name="keyTakeaways-format"][value="${draftData['keyTakeaways-format']}"]`).checked = true;
+            }
+            if (draftData['summary-format']) {
+                document.querySelector(`input[name="summary-format"][value="${draftData['summary-format']}"]`).checked = true;
+            }
+            if (draftData['followUp-format']) {
+                document.querySelector(`input[name="followUp-format"][value="${draftData['followUp-format']}"]`).checked = true;
+            }
+        });
+        {% endif %}
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateSubcategories();
         });
     </script>
+    
+    <!-- Preview Modal -->
+    <div id="previewModal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);">
+        <div style="background-color: white; margin: 2% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 1200px; max-height: 90vh; overflow: auto; position: relative;">
+            <span onclick="document.getElementById('previewModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer;">&times;</span>
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">Report Preview</h2>
+            <div id="previewContent"></div>
+        </div>
+    </div>
 </body>
 </html>
